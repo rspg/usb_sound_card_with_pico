@@ -1,0 +1,81 @@
+.program spdif_in
+
+preamble:
+    set x, 3
+public entry_point:   
+public sync_instr_point:
+    wait 1 pin 0
+preamble_bits:
+    in pins, 1                  [2]
+    jmp x-- preamble_bits       
+    set x, 27
+    jmp pin low_start
+
+high_start:
+    wait 1 pin 0                [4]
+    jmp pin zero_next_low
+one_next_high:
+    in y, 1
+    jmp x-- high_start
+    jmp preamble
+zero_next_low:
+    in null, 1
+    jmp x-- low_start
+    jmp preamble
+
+low_start:
+    wait 0 pin 0                [4]
+    jmp pin one_next_low
+zero_next_high:
+    in null, 1
+    jmp x-- high_start
+    jmp preamble
+one_next_low:
+    in y, 1                     
+    jmp x-- low_start
+    jmp preamble
+
+.program spdif_in_raw
+    in pins, 1
+
+% c-sdk {
+
+static inline void spdif_in_program_init_common(pio_sm_config sm_config, PIO pio, uint sm, uint offset, uint data_pin, bool shift_right) {    
+    sm_config_set_in_pins(&sm_config, data_pin);
+    sm_config_set_jmp_pin(&sm_config, data_pin);
+    sm_config_set_in_shift(&sm_config, shift_right, true, 32);
+    sm_config_set_fifo_join(&sm_config, PIO_FIFO_JOIN_RX);
+
+    pio_gpio_init(pio, data_pin);
+    pio_sm_init(pio, sm, offset, &sm_config);
+
+    uint pin_mask = (1u << data_pin);
+    uint pin_out = 0;
+    pio_sm_set_pindirs_with_mask(pio, sm, pin_out, pin_mask);
+    pio_sm_set_pins(pio, sm, 0); // clear pins
+}
+
+static inline void spdif_in_program_preexec(PIO pio, uint sm, uint offset)
+{
+    pio_sm_exec(pio, sm, pio_encode_mov_not(pio_y, pio_null));
+    pio_sm_exec(pio, sm, pio_encode_set(pio_x, 3));
+    pio_sm_exec(pio, sm, pio_encode_jmp(offset + spdif_in_offset_entry_point));
+}
+
+static inline void spdif_in_program_init(PIO pio, uint sm, uint offset, uint data_pin) {
+
+    pio_sm_config sm_config = spdif_in_program_get_default_config(offset);
+
+    spdif_in_program_init_common(sm_config, pio, sm, offset, data_pin, true);
+}
+
+static inline void spdif_in_raw_program_init(PIO pio, uint sm, uint offset, uint data_pin) {
+
+    pio_sm_config sm_config = spdif_in_raw_program_get_default_config(offset);
+
+    spdif_in_program_init_common(sm_config, pio, sm, offset, data_pin, false);
+
+    pio_sm_exec(pio, sm, pio_encode_jmp(offset));
+}
+
+%}

@@ -1,0 +1,75 @@
+From 67617f7a3c2105d21b9934a5f537bc2064d1396d Mon Sep 17 00:00:00 2001
+From: rspg <hiroki_pcc@hotmail.com>
+Date: Wed, 4 Oct 2023 12:37:11 +0900
+Subject: [PATCH] rp2040: allow memory preallocation
+
+---
+ src/portable/raspberrypi/rp2040/dcd_rp2040.c | 38 ++++++++++++++++++--
+ 1 file changed, 36 insertions(+), 2 deletions(-)
+
+diff --git a/src/portable/raspberrypi/rp2040/dcd_rp2040.c b/src/portable/raspberrypi/rp2040/dcd_rp2040.c
+index e8cee73fd..50d3ad5db 100644
+--- a/src/portable/raspberrypi/rp2040/dcd_rp2040.c
++++ b/src/portable/raspberrypi/rp2040/dcd_rp2040.c
+@@ -53,6 +53,25 @@ static uint8_t *next_buffer_ptr;
+ // USB_MAX_ENDPOINTS Endpoints, direction TUSB_DIR_OUT for out and TUSB_DIR_IN for in.
+ static struct hw_endpoint hw_endpoints[USB_MAX_ENDPOINTS][2];
+ 
++static struct {
++  uint8_t*  addr;
++  uint16_t  size;
++} hw_reserved_buffers[USB_MAX_ENDPOINTS][2];
++
++void tusb_pico_reserve_buffer(uint8_t ep_addr, uint16_t size)
++{
++  size = (size + 63)&~63;
++
++  const uint8_t num = tu_edpt_number(ep_addr);
++  const tusb_dir_t dir = tu_edpt_dir(ep_addr);
++  hw_reserved_buffers[num][dir].addr = next_buffer_ptr;
++  hw_reserved_buffers[num][dir].size = size;
++  next_buffer_ptr += size;
++
++  assert(((uintptr_t )next_buffer_ptr & 0b111111u) == 0);
++  hard_assert(hw_data_offset(next_buffer_ptr) <= USB_DPRAM_MAX);
++}
++
+ // SOF may be used by remote wakeup as RESUME, this indicate whether SOF is actually used by usbd
+ static bool _sof_enable = false;
+ 
+@@ -79,8 +98,16 @@ static void _hw_endpoint_alloc(struct hw_endpoint *ep, uint8_t transfer_type)
+     size *= 2u;
+   }
+ 
+-  ep->hw_data_buf = next_buffer_ptr;
+-  next_buffer_ptr += size;
++  const uint8_t num = tu_edpt_number(ep->ep_addr);
++  const tusb_dir_t dir = tu_edpt_dir(ep->ep_addr);
++  if(hw_reserved_buffers[num][dir].addr){
++    assert(size <= hw_reserved_buffers[num][dir].size);
++    ep->hw_data_buf = hw_reserved_buffers[num][dir].addr;
++  }
++  else {
++    ep->hw_data_buf = next_buffer_ptr;
++    next_buffer_ptr += size;
++  }
+ 
+   assert(((uintptr_t )next_buffer_ptr & 0b111111u) == 0);
+   uint dpram_offset = hw_data_offset(ep->hw_data_buf);
+@@ -104,6 +131,13 @@ static void _hw_endpoint_close(struct hw_endpoint *ep)
+     // Clear any endpoint state
+     memset(ep, 0, sizeof(struct hw_endpoint));
+ 
++    {
++      const uint8_t num = tu_edpt_number(ep->ep_addr);
++      const tusb_dir_t dir = tu_edpt_dir(ep->ep_addr);
++      if(hw_reserved_buffers[num][dir].addr)
++        return;
++    }
++
+     // Reclaim buffer space if all endpoints are closed
+     bool reclaim_buffers = true;
+     for ( uint8_t i = 1; i < USB_MAX_ENDPOINTS; i++ )
+-- 
+2.40.1.windows.1
+

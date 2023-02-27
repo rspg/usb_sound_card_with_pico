@@ -1,0 +1,56 @@
+.program spdif_out
+.side_set 1 opt
+
+low_start:
+	out x, 1                side 0b0		
+	jmp !x low_end                      [2]
+high_end:
+	jmp	y--	low_start       side 0b1    [3]
+public entry_point:
+pre_high:
+	set	y, 3                side 0b0    [7]
+    nop                                 [2]
+pre_high_loop:
+	out	x, 1
+	mov	pins, x
+	jmp	y--	pre_high_loop               [1]
+	set	y, 27				
+	jmp low_start           side 0b1    [3]
+											
+high_start:
+	out x, 1                side 0b1		
+	jmp	!x high_end                     [2]
+low_end:
+	jmp y-- high_start      side 0b0    [3]
+pre_low:
+	set y, 3                side 0b1    [7]
+    nop                                 [2]
+pre_low_loop:
+	out	x, 1
+	mov	pins, !x
+	jmp y-- pre_low_loop                [1]
+	set	y, 27				
+	jmp	high_start      	side 0b0    [3]
+
+% c-sdk {
+
+static inline void spdif_out_program_init(PIO pio, uint sm, uint offset, uint data_pin) {
+    pio_sm_config sm_config = spdif_out_program_get_default_config(offset);
+    
+    sm_config_set_out_pins(&sm_config, data_pin, 1);
+	sm_config_set_set_pins(&sm_config, data_pin, 1);
+    sm_config_set_sideset_pins(&sm_config, data_pin);
+    sm_config_set_out_shift(&sm_config, true, true, 32);
+	sm_config_set_fifo_join(&sm_config, PIO_FIFO_JOIN_TX);
+
+	pio_gpio_init(pio, data_pin);
+    pio_sm_init(pio, sm, offset, &sm_config);
+
+    uint pin_mask = (1u << data_pin);
+    pio_sm_set_pindirs_with_mask(pio, sm, pin_mask, pin_mask);
+    pio_sm_set_pins(pio, sm, 0); // clear pins
+
+    pio_sm_exec(pio, sm, pio_encode_jmp(offset + spdif_out_offset_entry_point));
+}
+
+%}

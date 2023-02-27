@@ -1,0 +1,27 @@
+
+.program pulse_out
+.side_set 1
+.wrap_target
+	nop      side 1
+	nop      side 0
+.wrap
+
+% c-sdk {
+
+static inline void pulse_out_program_init(PIO pio, uint sm, uint offset, uint out_pin) {
+    pio_sm_config sm_config = pulse_out_program_get_default_config(offset);
+
+    sm_config_set_out_pins(&sm_config, out_pin, 1);
+    sm_config_set_sideset_pins(&sm_config, out_pin);
+    
+    pio_gpio_init(pio, out_pin);
+    pio_sm_init(pio, sm, offset, &sm_config);
+
+    uint pin_mask = (1u << out_pin);
+    pio_sm_set_pindirs_with_mask(pio, sm, pin_mask, pin_mask);
+    pio_sm_set_pins(pio, sm, 0); // clear pins
+
+    pio_sm_exec(pio, sm, pio_encode_jmp(offset));
+}
+
+%}

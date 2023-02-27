@@ -1,0 +1,7 @@
+/build/
+/schematic/usbdac-backups
+schematic/fp-info-cache
+schematic/fp-lib-table
+/control_uwp/obj
+/control_uwp/.vs
+/control_uwp/bin
