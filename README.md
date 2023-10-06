@@ -91,6 +91,12 @@ If host os is Windows, The device requests to installation WinUSB driver to the 
 [control_uwp](control_uwp) is an application to controls the device volumes by using WinUSB via Windows Runtime.
 To building requires [Visual Studio 2022 with C# UWP application development](https://visualstudio.microsoft.com/).
 
+## References
+- [Raspberry Pi Pico Datasheet](https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf?_gl=1*lbhpfj*_ga*MjA5MDIxNzYzOC4xNjg0MzYzNDM5*_ga_22FD70LWDS*MTY5NjU4ODY5OS4zNS4xLjE2OTY1ODg5NTIuMC4wLjA.)  
+- [RP2040 Datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf?_gl=1*1rlrh3d*_ga*MjA5MDIxNzYzOC4xNjg0MzYzNDM5*_ga_22FD70LWDS*MTY5NjU4ODY5OS4zNS4xLjE2OTY1ODg4OTYuMC4wLjA.)    
+- [SPECIFICATION OF THE DIGITAL AUDIO INTERFACE (The AES/EBU interface)](https://tech.ebu.ch/docs/tech/tech3250.pdf)
+- [Texas Instruments PCM510xA 2.1 VRMS, 112/106/100 dB Audio Stereo DAC with PLL and 32-bit, 384 kHz PCM Interface](https://www.ti.com/lit/ds/symlink/pcm5102a.pdf?ts=1696564046679&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FPCM5102A)
+- [Texas Instruments PCM1808 Single-Ended, Analog-Input 24-Bit, 96-kHz Stereo ADC](https://www.ti.com/jp/lit/ds/symlink/pcm1808.pdf?ts=1696503248668&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252Fja-jp%252FPCM1808)
 
 ## Disclaimer
 

@@ -91,7 +91,15 @@ Windowsに接続した場合、ファームはMicrosoft OS Descriptor 2.0の定�
 [control_uwp](control_uwp)はWindowsRuntimeを通じてWinUSB APIを利用し、デバイス内の入力ターミナルのボリュームを制御するソフトウェアです。  
 ビルドには[Visual Studio 2022とC#のUWPアプリケーション開発オプション](https://visualstudio.microsoft.com/)をインストールする必要があります。
 
+## 参考資料
+- [Raspberry Pi Pico Datasheet](https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf?_gl=1*lbhpfj*_ga*MjA5MDIxNzYzOC4xNjg0MzYzNDM5*_ga_22FD70LWDS*MTY5NjU4ODY5OS4zNS4xLjE2OTY1ODg5NTIuMC4wLjA.)  
+- [RP2040 Datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf?_gl=1*1rlrh3d*_ga*MjA5MDIxNzYzOC4xNjg0MzYzNDM5*_ga_22FD70LWDS*MTY5NjU4ODY5OS4zNS4xLjE2OTY1ODg4OTYuMC4wLjA.)    
+- [SPECIFICATION OF THE DIGITAL AUDIO INTERFACE (The AES/EBU interface)](https://tech.ebu.ch/docs/tech/tech3250.pdf)
+- [Texas Instruments PCM510xA 2.1 VRMS, 112/106/100 dB Audio Stereo DAC with PLL and 32-bit, 384 kHz PCM Interface](https://www.ti.com/lit/ds/symlink/pcm5102a.pdf?ts=1696564046679&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FPCM5102A)
+- [Texas Instruments PCM1808 Single-Ended, Analog-Input 24-Bit, 96-kHz Stereo ADC](https://www.ti.com/jp/lit/ds/symlink/pcm1808.pdf?ts=1696503248668&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252Fja-jp%252FPCM1808)
+
 ## 免責事項
 実用における十分なテストは行っていません。
 ある程度の電気への知識とリスクを理解の上ご利用をお願いします。  
 このプロジェクトに基づく損害や傷害が生じても当方は責任を負いかねます。
+
