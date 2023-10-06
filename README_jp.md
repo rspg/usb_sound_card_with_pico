@@ -47,10 +47,6 @@ Please refer to follows for details.
 - [Raspberry Pi Documentation The C/C++ SDK](https://www.raspberrypi.com/documentation/microcontrollers/c_sdk.html)  
 - [CMake](https://cmake.org/)
 
-USB制御にはPicoSDKに含まれるTinyUSBを使用しています。  
-rp2040の実装ではメモリが解放されない問題があるため、事前に領域を確保して解放を回避する[パッチ](patch/tinyusb-rp2040-allow-memory-preallocation.patch)を用意しています。  
-ビルド前にTinyUSBにこのパッチをあてておく必要があります。  
-
 Cmake実行のためフォルダを作成します
 > mkdir build  
 > cd build  
@@ -66,6 +62,10 @@ LOGはTinyUSBのデバッグレベルに渡されます。
 
 プロファイルを有効にする場合 
 > cmake .. -DPROFILE=1
+
+USB制御にはPicoSDKに含まれるTinyUSBを使用しています。  
+rp2040の実装ではエンドポイントのメモリが解放されない問題があるため、事前に領域を確保して解放を回避する[パッチ](patch/tinyusb-rp2040-allow-memory-preallocation.patch)を用意しました。  
+TinyUSB内のアロケーションで停止する場合はこのパッチを当てることで解消できるかもしれません。
 
 ## デバイスのデバッグ
 
