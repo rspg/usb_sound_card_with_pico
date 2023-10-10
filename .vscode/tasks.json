@@ -6,7 +6,7 @@
         {
             "label": "openocd",
             "type": "shell",
-            "command": "openocd.exe -s scripts -f interface/nanoprobe.cfg -f target/rp2040.cfg",
+            "command": "./openocd.exe -s scripts -f interface/nanoprobe.cfg -f target/rp2040.cfg",
             "options": {
                 "cwd": "${env:PICO_sdk_PATH}/../tools/openocd-picoprobe"
             }
