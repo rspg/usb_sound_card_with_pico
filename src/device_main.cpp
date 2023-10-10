@@ -95,8 +95,8 @@ int main(void)
         tusb_pico_reserve_buffer(EP_AUDIO_CONTROL | 0x80, 256);
         tusb_pico_reserve_buffer(EP_AUDIO_STREAM, CFG_TUD_AUDIO_FUNC_1_EP_OUT_SW_BUF_SZ);
         tusb_pico_reserve_buffer(EP_AUDIO_STREAM | 0x80, CFG_TUD_AUDIO_FUNC_1_EP_IN_SW_BUF_SZ);
-        // tusb_pico_reserve_buffer(EP_AUDIO_STREAM_OUT_FB, 8);
-        // tusb_pico_reserve_buffer(EP_AUDIO_STREAM_OUT_FB | 0x80, 8);
+        tusb_pico_reserve_buffer(EP_AUDIO_STREAM_OUT_FB, 16);
+        tusb_pico_reserve_buffer(EP_AUDIO_STREAM_OUT_FB | 0x80, 16);
 #endif
 #if USB_IF_CONTROL_ENABLE
         tusb_pico_reserve_buffer(EP_AUDIO_USER_CONTROL, 256);
