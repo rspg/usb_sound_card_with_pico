@@ -9,8 +9,8 @@
 
 
 
-This is a project of USB sound card constructed with Raspberry Pi Pico microcontroller board.  
-Hardware schematics and firmware sourcecode are including.
+This is a project for a USB sound card constructed with a Raspberry Pi Pico microcontroller board.  
+Hardware schematics and firmware sourcecode are included.
 
 ## Features
 
@@ -23,27 +23,27 @@ Hardware schematics and firmware sourcecode are including.
 - Maximum resolution is 24bit
 - Maximum frequency is 96KHz
 
-In/out USB datastreams can not activate same time at 24bit/96KHz because lacking of transfaring bandwidth.  
-"Line in" and "SPDIF in" are mixed to one buffer to saving bandwidth of USB. Each volumes can control via generic USB driver. (Currently, It supports only for Windows WinUSB.)
+In/out USB data streams cannot activate simultaneously at 24-bit/96KHz due to a lack of transfer bandwidth.
+"Line in" and "SPDIF in" are mixed into one buffer to save USB bandwidth. Each volume can be controlled via a generic USB driver. (Currently, it only supports Windows WinUSB.)
 
 ## Hardware
 
 I used KiCad6 to design the schematics.  
-If you view the schematics, Please download [KiCad 6 or later](https://www.kicad.org/).
+If you want to view the schematics, Please download [KiCad 6 or later](https://www.kicad.org/).
 
-The hardware design is so simply and no ingenuity because I am not an expert of electronics.  
+The hardware design is simple and lacks ingenuity because I am not an electronics expert.
 But I designed the schematics with the concept of separating modules by function to facilitate testing and adding other functions.  
 Electronic components which are used are general and easily obtainable.   
-The DAC uses PCM5102a, May be easily replaced with any of PCM510x series. You can choise depending on availability those. (But I have never tried to this.)
+The DAC uses PCM5102a and may be easily replaced with any of the PCM510x series. You can choose depending on their availability (although I have never tried this).
 
 ## Firmware 
 
 The firmware is wrote by C and C++. 
-SPDIF control not use dedicated hardwares and are doing by the software with one of Pico's features called PIO. It provides to running IO independently of the main processer.   
-As above, Schematics are separated by function. This is also true for software. The hardware's functions are associated as a class for each in the software.
+SPDIF control does not use dedicated hardware and is implemented by the software using one of Pico's features called PIO. It allows running I/O independently of the main processor.
+Similar to the schematics, the software is also organized by function. Each hardware function is represented as a class in the software.
 
-The first of building the firmware, you should install Pico's SDK and CMake.
-Please refer to follows for details.
+To build the firmware, you should first install Pico's SDK and CMake.
+For detailed instructions, please refer to the following resources.
 - [Raspberry Pi Documentation The C/C++ SDK](https://www.raspberrypi.com/documentation/microcontrollers/c_sdk.html)  
 - [CMake](https://cmake.org/)
 
@@ -64,7 +64,8 @@ With profiling
 
 
 To usb device control use TinyUSB. It is included in PicoSDK.
-TinyUSB for Pico has a problem what memory deallocation of endpoint. Therefore, I prepared [a patch](patch/tinyusb-rp2040-allow-memory-preallocation.patch) for avoiding it. If you encounter to crashing the device in TinyUSB memory allocation,
+TinyUSB for Pico has a problem what memory deallocation of endpoint. Therefore, I prepared [a patch](patch/tinyusb-rp2040-allow-memory-preallocation.patch) for avoiding it. 
+If you encounter to crashing the device in TinyUSB memory allocation,
 It may resolve by applying [the patch](patch/tinyusb-rp2040-allow-memory-preallocation.patch) to TinyUSB.
 
 ## Debugging
@@ -74,7 +75,7 @@ And following commands are usable via serial monitor input.
 
 > stats_on
 
-Turn on output of internal stats every 0.5s when LOG is greater than 0.
+Turn on the output of internal statistics every 0.5 seconds when the LOG is greater than 0.
  
 > stats_off
 
@@ -82,11 +83,11 @@ Turn on output of internal stats.
 
 > perf
 
-Output mesured performance statistics when profiling enabled.
+Output measured performance statistics when profiling is enabled.
 
 ## Device unique request (Windows Only)
-Unique requests which to control internal behaviors from host device have been implemented in the firmware.
-If host os is Windows, The device requests to installation WinUSB driver to the OS by description of Microsoft OS Descriptor. Thereby user mode applications on the host become possible to transfer requests to the device.
+Unique requests to control internal behaviors from the host device have been implemented in the firmware.
+If the host OS is Windows, the device requests the installation of the WinUSB driver to the OS through the Microsoft OS Descriptor description. This enables user-mode applications on the host to send requests to the device.
 
 [control_uwp](control_uwp) is an application to controls the device volumes by using WinUSB via Windows Runtime.
 To building requires [Visual Studio 2022 with C# UWP application development](https://visualstudio.microsoft.com/).
@@ -100,5 +101,5 @@ To building requires [Visual Studio 2022 with C# UWP application development](ht
 
 ## Disclaimer
 
-I not responsible and guarantee even if you get something damage or injury when doing base on this project.  
-Please you keep mind DIY.
+I am not responsible and cannot guarantee any damage or injury that may occur if you decide to undertake this project.
+Please keep in mind that this is a DIY project.
