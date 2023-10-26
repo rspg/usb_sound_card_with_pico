@@ -61,7 +61,11 @@ namespace control_uwp
 		}
 
 		const int VID = 0xcafe;
+#if DEVICE_HAS_CDC_OUTPUT
 		const int PID = 0x4031;
+#else
+		const int PID = 0x4030;
+#endif
 		readonly Guid DeviceGuid = new Guid("8ED17B68-5386-4AB3-8269-B0E237AF481B");
 
 		const int VENDOR_REQUEST_CONTROLLER = 1;
@@ -87,17 +91,18 @@ namespace control_uwp
 			ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 		}
 
-		private async Task InitDevice()
+		private async Task<bool> InitDevice()
 		{
 			var aqs = UsbDevice.GetDeviceSelector(VID, PID, DeviceGuid);
 
 			var devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(aqs, null);
 			if (devices.Count == 0)
 			{
-				return;
+				return false;
 			}
 
 			targetDevice = await UsbDevice.FromIdAsync(devices[0].Id);
+			return true;
 		}
 
 		private async Task<int> GetDeviceVolume(Device device)
@@ -178,10 +183,15 @@ namespace control_uwp
 
 		private async void Page_Loaded(object sender, RoutedEventArgs e)
 		{
-			await InitDevice();
-
-			model.SPDIFInVolume = await GetDeviceVolume(Device.SPDIFIn);
-			model.LineInVolume = await GetDeviceVolume(Device.LineIn);
+			if (await InitDevice())
+			{
+				model.SPDIFInVolume = await GetDeviceVolume(Device.SPDIFIn);
+				model.LineInVolume = await GetDeviceVolume(Device.LineIn);
+			}
+			else
+			{
+				Application.Current.Exit();
+			}
 		}
 	}
 }
